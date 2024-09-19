@@ -1,0 +1,24 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+# Function to extract the text content from the JSON structure
+def extract_text_from_json(json_data):
+    try:
+        return json_data['candidates'][0]['content']['parts'][0]['text']
+    except (KeyError, IndexError):
+        return "Invalid JSON structure."
+
+# API route to receive JSON via POST request and return the processed result
+@app.route('/process_json', methods=['POST'])
+def process_json():
+    json_data = request.get_json()
+    
+    # Extracting the text content from the JSON data
+    text_content = extract_text_from_json(json_data)
+    
+    # Returning the extracted text as a response
+    return jsonify({"processed_text": text_content})
+
+if __name__ == '__main__':
+    app.run(debug=True)
